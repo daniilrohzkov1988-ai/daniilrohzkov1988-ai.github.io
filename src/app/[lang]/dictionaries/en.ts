@@ -114,7 +114,7 @@ const en: Dictionary = {
         description:
           "A cosmetics e-commerce demo: catalog with category/brand/price/stock filters, search, cart with promo codes and free shipping, wishlist, checkout flow, dark theme.",
         tags: ["HTML", "CSS", "JavaScript"],
-        href: "/projects/beauty-store/index.html",
+        href: "/projects/beauty-store/",
       },
     ],
   },

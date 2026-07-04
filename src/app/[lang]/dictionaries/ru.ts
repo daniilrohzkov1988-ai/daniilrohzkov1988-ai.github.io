@@ -114,7 +114,7 @@ const ru: Dictionary = {
         description:
           "Интернет-магазин косметики: каталог с фильтрами по категориям, бренду, цене и наличию, поиск, корзина с промокодом и бесплатной доставкой, избранное, оформление заказа, тёмная тема.",
         tags: ["HTML", "CSS", "JavaScript"],
-        href: "/projects/beauty-store/index.html",
+        href: "/projects/beauty-store/",
       },
     ],
   },
