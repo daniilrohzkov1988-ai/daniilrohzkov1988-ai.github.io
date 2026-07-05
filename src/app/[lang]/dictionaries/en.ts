@@ -106,7 +106,7 @@ const en: Dictionary = {
     placeholderTitle: "In progress",
     placeholderText:
       "More projects will show up here soon. Reach out to discuss your task right now.",
-    cardCount: 2,
+    cardCount: 1,
     demoLabel: "View demo",
     projects: [
       {
@@ -115,6 +115,13 @@ const en: Dictionary = {
           "A cosmetics e-commerce demo: catalog with category/brand/price/stock filters, search, cart with promo codes and free shipping, wishlist, checkout flow, dark theme.",
         tags: ["HTML", "CSS", "JavaScript"],
         href: "/projects/beauty-store/",
+      },
+      {
+        title: "Kholod Service",
+        description:
+          "Site for a fridge & appliance repair technician: services list with pricing, a dedicated page per service, a contact form, sticky-stacking service cards and scroll animations.",
+        tags: ["HTML", "CSS", "JavaScript"],
+        href: "/projects/holod-remont/",
       },
     ],
   },
