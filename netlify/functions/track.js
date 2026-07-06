@@ -1,6 +1,6 @@
 // Считает просмотры страниц: общее число заходов и уникальных посетителей за день.
-// Хранилище — Netlify Blobs (ключ-значение, работает "из коробки" на Netlify, без внешних сервисов).
-const { getStore } = require('@netlify/blobs');
+// Хранилище — Upstash Redis (бесплатный тариф, доступ по REST через обычный fetch).
+const { redisIncr } = require('./lib/upstash');
 
 const VISITOR_COOKIE = 'seen_today';
 
@@ -10,15 +10,12 @@ function todayKey() {
 
 exports.handler = async (event) => {
   try {
-    const store = getStore('site-stats');
     const key = todayKey();
     const cookieHeader = event.headers.cookie || event.headers.Cookie || '';
     const hasVisitorCookie = new RegExp(`(^|;\\s*)${VISITOR_COOKIE}=`).test(cookieHeader);
 
-    const day = (await store.get(key, { type: 'json' })) || { views: 0, uniques: 0 };
-    day.views += 1;
-    if (!hasVisitorCookie) day.uniques += 1;
-    await store.setJSON(key, day);
+    await redisIncr(`views:${key}`);
+    if (!hasVisitorCookie) await redisIncr(`uniques:${key}`);
 
     const headers = {};
     if (!hasVisitorCookie) {

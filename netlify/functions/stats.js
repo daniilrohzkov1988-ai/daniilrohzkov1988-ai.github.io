@@ -1,4 +1,4 @@
-const { getStore } = require('@netlify/blobs');
+const { redisPipeline } = require('./lib/upstash');
 const { isValidSession } = require('./lib/auth');
 
 function dateKey(d) {
@@ -20,18 +20,32 @@ exports.handler = async (event) => {
     return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
   }
 
-  const store = getStore('site-stats');
   const totalDays = 30;
   const today = new Date();
-  const daily = [];
-
+  const dates = [];
   for (let i = totalDays - 1; i >= 0; i -= 1) {
     const d = new Date(today);
     d.setUTCDate(d.getUTCDate() - i);
-    const key = dateKey(d);
-    const data = (await store.get(key, { type: 'json' })) || { views: 0, uniques: 0 };
-    daily.push({ date: key, views: data.views, uniques: data.uniques });
+    dates.push(dateKey(d));
   }
+
+  const commands = dates.flatMap((date) => [
+    ['GET', `views:${date}`],
+    ['GET', `uniques:${date}`],
+  ]);
+
+  let results;
+  try {
+    results = await redisPipeline(commands);
+  } catch (err) {
+    return { statusCode: 502, body: JSON.stringify({ error: 'Не удалось получить статистику' }) };
+  }
+
+  const daily = dates.map((date, i) => ({
+    date,
+    views: Number(results[i * 2] && results[i * 2].result) || 0,
+    uniques: Number(results[i * 2 + 1] && results[i * 2 + 1].result) || 0,
+  }));
 
   const last7 = daily.slice(-7);
   const prev7 = daily.slice(-14, -7);
